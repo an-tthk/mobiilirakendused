@@ -12,7 +12,24 @@ namespace An1
     {
         public MainPage()
         {
-            InitializeComponent();
+            var btn_dateTime = new Button { Text = "DateTime Page" };
+            var btn_stepperSlider = new Button { Text = "StepperSlider Page" };
+
+            btn_dateTime.Clicked += async (sender, e) =>
+                await Navigation.PushAsync(new DateTimePage());
+            
+            btn_stepperSlider.Clicked += async (sender, e) =>
+                await Navigation.PushAsync(new StepperSliderPage());
+
+            Content = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                Children =
+                {
+                    btn_dateTime,
+                    btn_stepperSlider
+                }
+            };
         }
     }
 }
