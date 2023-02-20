@@ -12,7 +12,21 @@ namespace An1
     {
         public MainPage()
         {
-            InitializeComponent();
+            var vf_btn = new Button
+            {
+                Text = "Valgusfoor",
+                BackgroundColor = Color.YellowGreen
+            };
+
+            vf_btn.Clicked += async (sender, e) => { await Navigation.PushAsync(new VfPage()); };
+
+            Content = new StackLayout
+            {
+                Children =
+                {
+                    vf_btn
+                }
+            };
         }
     }
 }
