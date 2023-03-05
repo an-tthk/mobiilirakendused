@@ -12,7 +12,22 @@ namespace An1
     {
         public MainPage()
         {
-            InitializeComponent();
+            var lmemm_btn = new Button
+            {
+                Text = "Lumememm",
+                TextColor = Color.Black,
+                BackgroundColor = Color.DarkKhaki
+            };
+
+            lmemm_btn.Clicked += async (sender, e) => await Navigation.PushAsync(new LumememmPage());
+
+            Content = new StackLayout
+            {
+                Children =
+                {
+                    lmemm_btn
+                }
+            };
         }
     }
 }

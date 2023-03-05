@@ -10,7 +10,8 @@ namespace An1
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //MainPage = new NavigationPage(new MainPage());
+            MainPage = new LumememmPage();
         }
 
         protected override void OnStart()
