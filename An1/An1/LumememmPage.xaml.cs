@@ -17,15 +17,19 @@ namespace An1
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class LumememmPage : ContentPage
 	{
-		List<Button> buttons = new List<Button>();
+		private List<Button> buttons = new List<Button>();
+		private Color lmemm_color = Color.Snow;
+		
 		public Button createBtn(string text)
 		{
 			var btn = new Button
 			{
 				Text = text,
+				FontSize = 11,
 				HorizontalOptions = LayoutOptions.CenterAndExpand,
 				VerticalOptions = LayoutOptions.CenterAndExpand,
-				HeightRequest = 60
+				HeightRequest = 60,
+				WidthRequest = 100
 			};
 			
 			buttons.Add(btn);
@@ -42,7 +46,7 @@ namespace An1
 
 			var top_lbl = new Label
 			{
-				Margin = new Thickness(0, 20, 0, 0),
+				Margin = new Thickness(0, 30, 0, 0),
 				Text = "Снеговик",
 				FontSize = 16,
 				FontAttributes = FontAttributes.Bold,
@@ -50,6 +54,8 @@ namespace An1
 				HorizontalTextAlignment = TextAlignment.Center,
 				VerticalTextAlignment = TextAlignment.Center
 			};
+
+			var change_color_tap = new TapGestureRecognizer();
 
 			var off_btn = createBtn("Спрятать");
 			var on_btn = createBtn("Отобразить");
@@ -65,43 +71,53 @@ namespace An1
 					// Подставочка
 					{
 						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0 },
-						new Rectangle { X = 0.5, Y = 0.78, Width = 200, Height = 20 },
+						new Rectangle { X = 0.5, Y = 0.86, Width = 200, Height = 20 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Ведро
 					{
 						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0 },
-						new Rectangle { X = 0.5, Y = 0.75, Width = 80, Height = 45 },
+						new Rectangle { X = 0.5, Y = 0.83, Width = 80, Height = 45 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Голова
 					{
-						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 60 },
-						new Rectangle { X = 0.5, Y = 0.2, Width = 120, Height = 120 },
+						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 60, GestureRecognizers = { change_color_tap } },
+						new Rectangle { X = 0.5, Y = 0.17, Width = 120, Height = 120 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Тело
 					{
-						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 75 },
-						new Rectangle { X = 0.5, Y = 0.38, Width = 150, Height = 150 },
+						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 75, GestureRecognizers = { change_color_tap } },
+						new Rectangle { X = 0.5, Y = 0.40, Width = 150, Height = 150 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Низ
 					{
-						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 90 },
-						new Rectangle { X = 0.5, Y = 0.63, Width = 180, Height = 180 },
+						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 90, GestureRecognizers = { change_color_tap } },
+						new Rectangle { X = 0.5, Y = 0.72, Width = 180, Height = 180 },
 						AbsoluteLayoutFlags.PositionProportional
 					}
 				}
 			};
 
+			change_color_tap.Tapped += (sender, e) =>
+			{
+				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.BackgroundColor == lmemm_color);
+				var new_color_str = String.Format("#{0:X2}{1:X2}{2:X2}", rnd.Next(0, 256), rnd.Next(0, 256), rnd.Next(0, 256));
+				var new_color = Color.FromHex(new_color_str);
+
+				lmemm_enum.ForEach(c => c.BackgroundColor = new_color);
+				lmemm_color = new_color;
+			};
+
 			melt_btn.Clicked += async (sender, e) =>
 			{
-				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.BackgroundColor == Color.Snow);
+				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.BackgroundColor == lmemm_color);
 
 				if (lmemm_enum.FirstOrDefault() != null)
 				{
@@ -121,6 +137,9 @@ namespace An1
 			on_btn.Clicked += (sender, e) =>
 			{
 				lmemm_abs.Children.ForEach((c) => c.Opacity = 1);
+				lmemm_abs.Children.Where(c => c.BackgroundColor == lmemm_color).ForEach(c => c.BackgroundColor = Color.Snow);
+				lmemm_color = Color.Snow;
+
 				top_lbl.Text = "Снеговик";
 				UnlockButtons();
 			};
@@ -168,6 +187,15 @@ namespace An1
 							}
 
 							this.BackgroundColor = Color.LightGray;
+						}),
+						Task.Run(async () =>
+						{
+							while (lumm_disco)
+							{
+								await lmemm_abs.RotateTo(rnd.Next(-90, 90), 1000);
+							}
+
+							lmemm_abs.Rotation = 0;
 						})
 					);
 
@@ -185,18 +213,29 @@ namespace An1
 			
 			Content = new StackLayout
 			{
-				Margin = new Thickness(20),
+				//Margin = new Thickness(20),
 				VerticalOptions = LayoutOptions.FillAndExpand,
 				Children =
 				{
 					top_lbl,
 					lmemm_abs,
+					new Label
+					{
+						Margin = new Thickness(20, 0, 0, 0),
+						Text = "Нажмите на снеговика, что-бы изменить его цвет.\rНажмите на \"Отобразить\", что-бы вернуть цвет к начальному состоянию.",
+						FontSize = 14,
+						FontAttributes = FontAttributes.Bold,
+						TextColor = Color.DarkSlateGray,
+						HorizontalOptions = LayoutOptions.StartAndExpand,
+						HorizontalTextAlignment = TextAlignment.Start
+					},
 					new FlexLayout
 					{
 						Direction = FlexDirection.Row,
 						AlignItems = FlexAlignItems.Center,
 						JustifyContent = FlexJustify.SpaceEvenly,
 						HeightRequest = 60,
+						Margin = new Thickness(10),
 						Children =
 						{
 							on_btn,
