@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define DEBUG_MELT_TRANSACTION
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,7 +20,6 @@ namespace An1
 	public partial class LumememmPage : ContentPage
 	{
 		private List<Button> buttons = new List<Button>();
-		private Color lmemm_color = Color.Snow;
 		
 		public Button createBtn(string text)
 		{
@@ -70,35 +71,35 @@ namespace An1
 				{
 					// Подставочка
 					{
-						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0 },
+						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0, TabIndex = 0 },
 						new Rectangle { X = 0.5, Y = 0.86, Width = 200, Height = 20 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Ведро
 					{
-						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0 },
+						new BoxView { BackgroundColor = Color.Silver, CornerRadius = 0, TabIndex = 0 },
 						new Rectangle { X = 0.5, Y = 0.83, Width = 80, Height = 45 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Голова
 					{
-						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 60, GestureRecognizers = { change_color_tap } },
+						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 60, TabIndex = 1, GestureRecognizers = { change_color_tap } },
 						new Rectangle { X = 0.5, Y = 0.17, Width = 120, Height = 120 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Тело
 					{
-						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 75, GestureRecognizers = { change_color_tap } },
+						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 75, TabIndex = 1, GestureRecognizers = { change_color_tap } },
 						new Rectangle { X = 0.5, Y = 0.40, Width = 150, Height = 150 },
 						AbsoluteLayoutFlags.PositionProportional
 					},
 
 					// Низ
 					{
-						new BoxView { BackgroundColor = lmemm_color, CornerRadius = 90, GestureRecognizers = { change_color_tap } },
+						new BoxView { BackgroundColor = Color.Snow, CornerRadius = 90, TabIndex = 1, GestureRecognizers = { change_color_tap } },
 						new Rectangle { X = 0.5, Y = 0.72, Width = 180, Height = 180 },
 						AbsoluteLayoutFlags.PositionProportional
 					}
@@ -107,28 +108,45 @@ namespace An1
 
 			change_color_tap.Tapped += (sender, e) =>
 			{
-				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.BackgroundColor == lmemm_color);
+				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.TabIndex == 1);
 				var new_color_str = String.Format("#{0:X2}{1:X2}{2:X2}", rnd.Next(0, 256), rnd.Next(0, 256), rnd.Next(0, 256));
 				var new_color = Color.FromHex(new_color_str);
 
 				lmemm_enum.ForEach(c => c.BackgroundColor = new_color);
-				lmemm_color = new_color;
 			};
 
 			melt_btn.Clicked += async (sender, e) =>
 			{
-				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.BackgroundColor == lmemm_color);
+				var lmemm_enum = lmemm_abs.Children.Where(c => c.Opacity == 1 && c.TabIndex == 1);
 
 				if (lmemm_enum.FirstOrDefault() != null)
 				{
 					top_lbl.Text = "Снеговик тает...";
 
-					LockButtons(new Button[] { on_btn, off_btn, melt_btn });
+					LockButtons(new Button[] { melt_btn });
 
 					foreach (var c in lmemm_enum)
-						await c.FadeTo(0, 2000);
+					{
+#if DEBUG_MELT_TRANSACTION
+						top_lbl.Text = "Снеговик тает...";
+#endif
+						uint len = (uint)(1250 * Math.Log10(c.Y));
+						await Task.WhenAll(
+							Task.Run(async () => await c.FadeTo(0, len)),
+							Task.Run(async () =>
+							{
+#if DEBUG_MELT_TRANSACTION
+								top_lbl.Dispatcher.BeginInvokeOnMainThread(() => top_lbl.Text += $" { len }");
+#endif
+								if (c != lmemm_enum.Last())
+									await c.TranslateTo(0, c.Y, len, Easing.SinIn);
+							})
+						);
+					}
 
 					top_lbl.Text = "Снеговик растаял!";
+					UnlockButtons();
+					LockButtons(new Button[] { on_btn, off_btn, melt_btn });
 				}
 
 				//lmemm_abs.Children.ForEach(async (c) => await c.FadeTo(0, 2000));
@@ -137,8 +155,11 @@ namespace An1
 			on_btn.Clicked += (sender, e) =>
 			{
 				lmemm_abs.Children.ForEach((c) => c.Opacity = 1);
-				lmemm_abs.Children.Where(c => c.BackgroundColor == lmemm_color).ForEach(c => c.BackgroundColor = Color.Snow);
-				lmemm_color = Color.Snow;
+				lmemm_abs.Children.Where(c => c.TabIndex == 1).ForEach(c =>
+				{ 
+					c.BackgroundColor = Color.Snow;
+					c.TranslationX = c.TranslationY = 0;
+				});
 
 				top_lbl.Text = "Снеговик";
 				UnlockButtons();
@@ -171,7 +192,7 @@ namespace An1
 
 								var scale_var = rand * rnd.NextDouble();
 								
-								await lmemm_abs.ScaleTo(0.9 + scale_var, 1000);
+								await lmemm_abs.ScaleTo(0.9 + scale_var, 1000, Easing.BounceOut);
 							}
 
 							lmemm_abs.Scale = 1;
@@ -192,10 +213,39 @@ namespace An1
 						{
 							while (lumm_disco)
 							{
-								await lmemm_abs.RotateTo(rnd.Next(-90, 90), 1000);
+								await lmemm_abs.RotateTo(rnd.Next(-90, 90), 1000, Easing.SinInOut);
 							}
 
 							lmemm_abs.Rotation = 0;
+						}),
+						Task.Run(async () =>
+						{
+							await top_lbl.ColorTo(Color.DarkSlateGray, Color.AliceBlue, cl => top_lbl.TextColor = cl, 2000, Easing.SinInOut);
+							while (lumm_disco)
+							{
+								await top_lbl.ColorTo(Color.AliceBlue, Color.Aqua, cl => top_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await top_lbl.ColorTo(Color.Aqua, Color.ForestGreen, cl => top_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await top_lbl.ColorTo(Color.ForestGreen, Color.Fuchsia, cl => top_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await top_lbl.ColorTo(Color.Fuchsia, Color.AliceBlue, cl => top_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+							}
+
+							await top_lbl.ColorTo(Color.DarkSlateGray, Color.DarkSlateGray, cl => top_lbl.TextColor = cl, 0);
+						}),
+						Task.Run(async () =>
+						{
+							var con_st = Content as StackLayout;
+							var con_st_lbl = con_st.Children.Where((c) => c.TabIndex == 1).FirstOrDefault() as Label;
+
+							await con_st_lbl.ColorTo(Color.DarkSlateGray, Color.AliceBlue, cl => con_st_lbl.TextColor = cl, 2000, Easing.SinInOut);
+							while (lumm_disco)
+							{
+								await con_st_lbl.ColorTo(Color.AliceBlue, Color.Aqua, cl => con_st_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await con_st_lbl.ColorTo(Color.Aqua, Color.ForestGreen, cl => con_st_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await con_st_lbl.ColorTo(Color.ForestGreen, Color.Fuchsia, cl => con_st_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+								await con_st_lbl.ColorTo(Color.Fuchsia, Color.AliceBlue, cl => con_st_lbl.TextColor = lumm_disco ? cl : Color.DarkSlateGray, lumm_disco ? 2000u : 0u, Easing.SinInOut);
+							}
+
+							await con_st_lbl.ColorTo(Color.DarkSlateGray, Color.DarkSlateGray, cl => con_st_lbl.TextColor = cl, 0);
 						})
 					);
 
@@ -221,6 +271,7 @@ namespace An1
 					lmemm_abs,
 					new Label
 					{
+						TabIndex = 1,
 						Margin = new Thickness(20, 0, 0, 0),
 						Text = "Нажмите на снеговика, что-бы изменить его цвет.\rНажмите на \"Отобразить\", что-бы вернуть цвет к начальному состоянию.",
 						FontSize = 14,
