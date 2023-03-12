@@ -5,29 +5,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace An1
 {
     public partial class MainPage : ContentPage
     {
+        Dictionary<string, ContentPage> _pages = new Dictionary<string, ContentPage>
+        {
+            { "Valgusfoor", new VfPage() },
+            { "Lumememm", new LumememmPage() }
+        };
+
         public MainPage()
         {
-            var lmemm_btn = new Button
-            {
-                Text = "Lumememm",
-                TextColor = Color.Black,
-                BackgroundColor = Color.DarkKhaki
-            };
+            BackgroundColor = Color.LightGray;
+            Content = new StackLayout { Orientation = StackOrientation.Vertical };
 
-            lmemm_btn.Clicked += async (sender, e) => await Navigation.PushAsync(new LumememmPage());
-
-            Content = new StackLayout
+            foreach (var p in _pages)
             {
-                Children =
+                var btn = new Button
                 {
-                    lmemm_btn
-                }
-            };
+                    Text = p.Key,
+                    TextColor = Color.Black,
+                    BackgroundColor = Color.DarkKhaki,
+                    TabIndex = _pages.IndexOf(p)
+                };
+
+                (Content as StackLayout).Children.Add(btn);
+                btn.Clicked += async (sender, e) =>
+                    await Navigation.PushAsync(_pages[(sender as Button).Text]);
+            }
         }
     }
 }
