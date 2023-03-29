@@ -14,7 +14,9 @@ namespace An1
         Dictionary<string, ContentPage> _pages = new Dictionary<string, ContentPage>
         {
             { "Valgusfoor", new VfPage() },
-            { "Lumememm", new LumememmPage() }
+            { "Lumememm", new LumememmPage() },
+            { "Horoskoop", new HoroskoopPage() },
+            { "Ajaplaan", new AjaplaanPage() }
         };
 
         public MainPage()
