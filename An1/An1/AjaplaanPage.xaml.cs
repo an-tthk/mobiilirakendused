@@ -28,8 +28,8 @@ namespace An1
             {
                 if (e.PropertyName == "Time")
                 {
-                    string[] messages = { "01:00 - Magama", "06:00 - Varahommik", "07:00 - Hommikusöök", "8:30 - Õppima", "12:00 - Õppima", "13:00 - Lõunasöök", "14:00 -Õppima", "16:00 - Sport", "17:00 - Kodune aeg", "18:00 - Õhtusöök", "19:00 -Õhtu ", "22:00 - Õhtu", "23:00 -Magama" };
-                    string[] imageSources = { "magama.png", "sun.png", "hommikusook.png", "tool.png", "tool.png", "lounasook.png", "tool.png", "sport.png", "kodu.png", "ohtusook.png", "luna.png", "luna.png", "magama.png", };
+                    string[] messages = { "06:00 - Утро", "07:00 - Утренний завтрак", "8:30 - Учеба", "13:00 - Обед", "14:00 - Учеба", "16:00 - Спорт", "17:00 - Дома", "18:00 - Ужин", "19:00 - Вечер", "22:00 - Õhtu", "23:00 - Сон" };
+                    string[] imageSources = { "sun.png", "hommikusook.png", "tool.png", "lounasook.png", "tool.png", "sport.png", "kodu.png", "ohtusook.png", "luna.png", "luna.png", "magama.png", };
 
                     var mes = messages.Where((m) =>
                     {
@@ -58,7 +58,7 @@ namespace An1
                     tp,
                     new Label
                     {
-                        Text = "Label",
+                        Text = "Привет",
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.Center,
                         VerticalOptions = LayoutOptions.Start
