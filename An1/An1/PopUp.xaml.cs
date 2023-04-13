@@ -49,7 +49,7 @@ namespace An1
                 switch(btn.TabIndex)
                 {
                     case 0:
-                        btn.Clicked += OnCheckButtonClicked;
+                        btn.Clicked += OnCheckArifmeticsClicked;
                         break;
                     case 1:
                         btn.Clicked += OnCheckAlphabetClicked;
@@ -60,7 +60,7 @@ namespace An1
             }
         }
 
-        async void OnCheckButtonClicked(object sender, EventArgs e)
+        async void OnCheckArifmeticsClicked(object sender, EventArgs e)
         {
             List<string> arifmetics = new List<string>();
             
