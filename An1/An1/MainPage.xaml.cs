@@ -17,7 +17,7 @@ namespace An1
             { "Lumememm", new LumememmPage() },
             { "Horoskoop", new HoroskoopPage() },
             { "Ajaplaan", new AjaplaanPage() },
-            { "PopUp", new PopUp() },
+            { "PopUp", new PopUpPage() },
         };
 
         public MainPage()

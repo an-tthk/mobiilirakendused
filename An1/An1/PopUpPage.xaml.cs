@@ -12,11 +12,11 @@ using Xamarin.Forms.Xaml;
 namespace An1
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PopUp : ContentPage
+    public partial class PopUpPage : ContentPage
     {
         Random rnd = new Random();
 
-        public PopUp()
+        public PopUpPage()
         {
             string[] btns =
             {
@@ -83,7 +83,7 @@ namespace An1
 
             if (await DisplayAlert("Repeat?", "Do you want to repeat?", "Yes", "Cancel"))
             {
-                OnCheckButtonClicked(sender, e);
+                OnCheckArifmeticsClicked(sender, e);
             }
         }
 
