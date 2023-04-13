@@ -16,7 +16,8 @@ namespace An1
             { "Valgusfoor", new VfPage() },
             { "Lumememm", new LumememmPage() },
             { "Horoskoop", new HoroskoopPage() },
-            { "Ajaplaan", new AjaplaanPage() }
+            { "Ajaplaan", new AjaplaanPage() },
+            { "PopUp", new PopUp() },
         };
 
         public MainPage()
