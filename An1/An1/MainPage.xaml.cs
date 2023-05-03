@@ -18,6 +18,7 @@ namespace An1
             { "Horoskoop", new HoroskoopPage() },
             { "Ajaplaan", new AjaplaanPage() },
             { "PopUp", new PopUpPage() },
+            { "PopUp Chastushki", new PopUpChastushkiPage() }
         };
 
         public MainPage()
