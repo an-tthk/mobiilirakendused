@@ -23,8 +23,8 @@ namespace An1
 			string[] btns =
 			{
 				"Hear some \"chastushka\"",
-                "Add a \"chastushka\" to file"
-            };
+				"Add a \"chastushka\" to file"
+			};
 
 			Content = new StackLayout
 			{
@@ -54,42 +54,42 @@ namespace An1
 						btn.Clicked += OnCheckChistushkiClicked;
 						break;
 					case 1:
-                        btn.Clicked += OnAddChistushkaClicked;
-                        goto default; /* fallthrough */
+						btn.Clicked += OnAddChistushkaClicked;
+						goto default; /* fallthrough */
 					default:
 						break;
 				}
 			}
 		}
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            UpdateChastushkiDb();
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+			UpdateChastushkiDb();
 			CreateChastushkiDbIfEmpty();
-        }
+		}
 
-        private void UpdateChastushkiDb()
-        {
-            try
-            {
-                string chastushki = File.ReadAllText(Path.Combine(folderPath, "chastushki.txt"));
+		private void UpdateChastushkiDb()
+		{
+			try
+			{
+				string chastushki = File.ReadAllText(Path.Combine(folderPath, "chastushki.txt"));
 
-                foreach (string c in chastushki.Split(';'))
-                {
-                    if (string.IsNullOrEmpty(c))
-                        continue;
+				foreach (string c in chastushki.Split(';'))
+				{
+					if (string.IsNullOrEmpty(c))
+						continue;
 					if (chastushkiDb.Exists((c_) => c_.Equals(c)))
 						continue;
 
-                    chastushkiDb.Add(c);
-                }
-            }
-            catch (Exception e)
-            {
-                ;
-            }
-        }
+					chastushkiDb.Add(c);
+				}
+			}
+			catch (Exception e)
+			{
+				;
+			}
+		}
 
 		private void CreateChastushkiDbIfEmpty()
 		{
@@ -200,28 +200,28 @@ namespace An1
 				;
 			";
 
-            File.WriteAllText(Path.Combine(folderPath, "chastushki.txt"), chastushki);
+			File.WriteAllText(Path.Combine(folderPath, "chastushki.txt"), chastushki);
 
-            foreach (string c in chastushki.Split(';'))
+			foreach (string c in chastushki.Split(';'))
 			{
 				if (string.IsNullOrEmpty(c))
 					continue;
-                if (chastushkiDb.Exists((c_) => c_.Equals(c)))
-                    continue;
+				if (chastushkiDb.Exists((c_) => c_.Equals(c)))
+					continue;
 
-                chastushkiDb.Add(c);
-            }
+				chastushkiDb.Add(c);
+			}
 		}
 
-        async void OnCheckChistushkiClicked(object sender, EventArgs e)
+		async void OnCheckChistushkiClicked(object sender, EventArgs e)
 		{
 			await DisplayAlert("Let's hear some \"chastushki\".", "Press OK to continue..", "OK");
 
 			if (chastushkiDb.Count != 0)
 			{
 				int c_id = -1;
-                string act = await DisplayActionSheet($"Show random \"chastushka\" or enter a number (1-{chastushkiDb.Count}).", "Cancel", null,
-                    "Show random \"chastushka\"", "Enter number");
+				string act = await DisplayActionSheet($"Show random \"chastushka\" or enter a number (1-{chastushkiDb.Count}).", "Cancel", null,
+					"Show random \"chastushka\"", "Enter number");
 
 				switch (act)
 				{
@@ -229,40 +229,40 @@ namespace An1
 						c_id = rnd.Next(1, chastushkiDb.Count) - 1;
 						break;
 					case "Enter number":
-                        var chastushka_id = await DisplayPromptAsync("Enter number", $"A number of \"chastushka\" (1-{chastushkiDb.Count})", placeholder: "Number");
+						var chastushka_id = await DisplayPromptAsync("Enter number", $"A number of \"chastushka\" (1-{chastushkiDb.Count})", placeholder: "Number");
 						Int32.TryParse(chastushka_id, out c_id);
-                        c_id -= 1;
+						c_id -= 1;
 						goto default; /* fallthrough */
-                    default:
-                        break;
-                }
+					default:
+						break;
+				}
 
 				if (c_id >= 0 && c_id < chastushkiDb.Count)
 				{
-                    await DisplayAlert("Chastushka!", chastushkiDb.ElementAt(c_id), "Back");
-                }
+					await DisplayAlert("Chastushka!", chastushkiDb.ElementAt(c_id), "Back");
+				}
 				else
 				{
-                    await DisplayAlert("Error", $"No chastushki with id {c_id}", "Cancel");
-                } 
+					await DisplayAlert("Error", $"No chastushki with id {c_id}", "Cancel");
+				} 
 			}
 
-            return;
-        }
+			return;
+		}
 
-        async void OnAddChistushkaClicked(object sender, EventArgs e)
+		async void OnAddChistushkaClicked(object sender, EventArgs e)
 		{
 			string chastushka = await DisplayPromptAsync("Enter a \"chastushka\".", "", placeholder: "Chastushka text.");
 			
 			if (chastushka != null && chastushkiDb.Any((o) => o.Equals(chastushka)) == false)
 			{
-                chastushkiDb.Add(chastushka);
+				chastushkiDb.Add(chastushka);
 				File.AppendAllText(Path.Combine(folderPath, "chastushki.txt"), chastushka + Environment.NewLine + ";");
 
-                await DisplayAlert("Message!", "A \"chastushka\" added.", "Back");
-            }
+				await DisplayAlert("Message!", "A \"chastushka\" added.", "Back");
+			}
 
 			return;
 		}
-    }
+	}
 }
