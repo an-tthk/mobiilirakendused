@@ -10,11 +10,29 @@
                 <DataTemplate>
                     <ViewCell>
                         <ViewCell.View>
-                            <StackLayout>
-                                <Label Text="{Binding Name}" FontSize="Medium" />
-                                <Label Text="{Binding Email}" FontSize="Small" />
-                                <Label Text="{Binding Phone}" FontSize="Small" />
-                            </StackLayout>
+                            <Grid Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="80"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <Image WidthRequest="80" Source="{
+                                        Binding PictureUrl,
+                                        TargetNullValue='https://static.vecteezy.com/system/resources/previews/014/554/760/non_2x/man-profile-negative-photo-anonymous-silhouette-human-head-businessman-worker-support-illustration-vector.jpg'
+                                    }"/>
+                                <StackLayout Grid.Column="1">
+                                    <Label Text="{Binding Name}" FontSize="Medium" FontAttributes="Bold" />
+                                    <Label Text="{Binding Email}" FontSize="Small" />
+                                    <Label Text="{Binding Phone}" FontSize="Small" />
+                                </StackLayout>
+                                <FlexLayout Grid.Column="2" FlowDirection="LeftToRight" JustifyContent="Center">
+                                    <Button Text="Call" Command="{Binding ListViewModel.CallFriendCommand}" CommandParameter="{Binding}"/>
+                                    <Button Text="Send SMS" Command="{Binding ListViewModel.SendSmsCommand}" CommandParameter="{Binding}"/>
+                                </FlexLayout>
+                            </Grid>
                         </ViewCell.View>
                     </ViewCell>
                 </DataTemplate>

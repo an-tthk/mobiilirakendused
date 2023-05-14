@@ -19,6 +19,14 @@ namespace An1.Views
             InitializeComponent();
             ViewModel = vm;
             this.BindingContext = ViewModel;
+
+            if (ViewModel != null)
+            {
+                if (ViewModel.IsValid)
+                {
+                    AddOrEdit.Text = "Edit";
+                }
+            }
         }
     }
 }

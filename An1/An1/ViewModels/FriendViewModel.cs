@@ -17,6 +17,11 @@ namespace An1.ViewModels
             Friend = new Friend();
         }
 
+        public FriendViewModel(Friend friend)
+        {
+            Friend = friend;
+        }
+
         public FriendsListViewModel ListViewModel
         {
             get => lvm;
@@ -67,13 +72,27 @@ namespace An1.ViewModels
             }
         }
 
+        public string PictureUrl
+        {
+            get => Friend.PictureUrl;
+            set
+            {
+                if (Friend.PictureUrl != value)
+                {
+                    Friend.PictureUrl = value;
+                    OnPropertyChanged("PictureUrl");
+                }
+            }
+        }
+
         public bool IsValid
         {
+            /* PictureUrl is excluded, since it's optional field. */
             get
             {
-                return ((!string.IsNullOrEmpty(Name.Trim())) ||
-                    (!string.IsNullOrEmpty(Email.Trim())) ||
-                    (!string.IsNullOrEmpty(Phone.Trim())));
+                return ((!string.IsNullOrEmpty(Name?.Trim())) ||
+                    (!string.IsNullOrEmpty(Email?.Trim())) ||
+                    (!string.IsNullOrEmpty(Phone?.Trim())));
             }
         }
 

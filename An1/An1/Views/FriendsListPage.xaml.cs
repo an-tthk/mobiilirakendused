@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using An1.ViewModels;
+using An1.Models;
+using Plugin.Messaging;
 
 namespace An1.Views
 {

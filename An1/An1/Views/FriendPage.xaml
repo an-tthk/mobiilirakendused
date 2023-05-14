@@ -10,9 +10,11 @@
             <Entry Text="{Binding Email}" FontSize="Medium" />
             <Label Text="Phone" />
             <Entry Text="{Binding Phone}" FontSize="Medium" />
+            <Label Text="Picture Url" />
+            <Entry Text="{Binding PictureUrl}" FontSize="Medium" />
         </StackLayout>
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
-            <Button Text="Add" Command="{Binding ListViewModel.SaveFriendCommand}" CommandParameter="{Binding}" />
+            <Button x:Name="AddOrEdit" Text="Add" Command="{Binding ListViewModel.SaveFriendCommand}" CommandParameter="{Binding}" />
             <Button Text="Delete" Command="{Binding ListViewModel.DeleteFriendCommand}" CommandParameter="{Binding}" />
             <Button Text="Back" Command="{Binding ListViewModel.BackCommand}" CommandParameter="{Binding}" />
         </StackLayout>
